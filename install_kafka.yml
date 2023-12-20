@@ -1,5 +1,5 @@
 - name: Install kafka using ansible
-- hosts: kafka
+  hosts: kafka
   tasks:
     - name: Install yum packages
       become: True
