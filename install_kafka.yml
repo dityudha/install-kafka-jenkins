@@ -1,5 +1,5 @@
 - name: Install kafka using ansible
-  hosts: kafka
+  hosts: all
   tasks:
     - name: Install yum packages
       become: True
@@ -28,7 +28,7 @@
         - 9092/tcp
 
 - name: Zookeeper
-  hosts: kafka
+  hosts: all
   tasks:
     - name: Start server
       shell: |
