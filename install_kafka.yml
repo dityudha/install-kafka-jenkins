@@ -1,0 +1,36 @@
+- name: Install kafka using ansible
+- hosts: kafka
+  tasks:
+    - name: Install yum packages
+      become: True
+      yum:
+        name: ['java-1.8.0-openjdk']
+        
+    - name: Download Kafka 
+      get_url: 
+        url: https://downloads.apache.org/kafka/3.6.1/kafka_2.13-3.6.1.tgz
+        dest: /home/soleluna/ 
+        
+    - name: Unpack the tar
+      shell: tar -xzvf /home/soleluna/kafka_2.13-3.6.1.tgz 
+      
+    - name: Copy Kafka into place
+      shell: mv /home/soleluna/kafka_2.13-3.6.1 /home/soleluna/kafka
+      
+    - name: Open firewall ports
+      become: True
+      firewalld:
+        port: "{{ item }}"
+        permanent: yes
+        state: enabled
+      loop:
+        - 2181/tcp
+        - 9092/tcp
+
+- name: Zookeeper
+  hosts: kafka
+  tasks:
+    - name: Start server
+      shell: |
+       cd kafka
+       nohup bin/zookeeper-server-start.sh config/zookeeper.properties &
