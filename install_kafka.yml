@@ -1,18 +1,20 @@
 - name: Install kafka using ansible
-  hosts: 192.168.233.103
+  hosts: all
   tasks:
-    - name: Install yum packages
-      become: True
-      yum:
-        name: ["java-1.8.0-openjdk"]
+#    - name: Install yum packages
+#      become: True
+#      yum:
+#        name: ["java-1.8.0-openjdk"]
 
-    - name: Download Kafka
-      get_url:
-        url: https://downloads.apache.org/kafka/3.6.1/kafka_2.13-3.6.1.tgz
-        dest: /home/soleluna/
+#    - name: Download Kafka
+#      get_url:
+#        url: https://downloads.apache.org/kafka/3.6.1/kafka_2.13-3.6.1.tgz
+#        dest: /home/soleluna/
 
     - name: Unpack the tar
-      shell: tar -xzvf /home/soleluna/kafka_2.13-3.6.1.tgz
+      ansible.builtin.unarchive:
+       src: /home/soleluna/kafka_2.13-3.6.1.tgz
+       dest: /home/soleluna
 
     - name: Copy Kafka into place
       shell: mv /home/soleluna/kafka_2.13-3.6.1 /home/soleluna/kafka
@@ -28,9 +30,17 @@
         - 9092/tcp
 
 - name: Zookeeper
-  hosts: 192.168.233.103
+  hosts: all
   tasks:
-    - name: Start server
+    - name: Start zookeeper server
       shell: |
         cd kafka
         nohup bin/zookeeper-server-start.sh config/zookeeper.properties &
+
+- name: Broker
+  hosts: all
+  tasks:
+    - name: Start broker server
+      shell: |
+        cd kafka
+		nohup bin/kafka-server-start.sh config/server.properties &
